@@ -62,3 +62,26 @@ real exec session and the trigger applies normally.
 
 Copy `.env.local.example` to `.env.local` and fill in your project's URL
 and anon key from Supabase Dashboard → Project Settings → API.
+
+## 6. Calendar sync
+
+Run `0004_calendar_practices.sql` the same way as the others (it is
+idempotent). It creates `calendar_settings` and `practices`.
+
+Practices come from the club Google Calendar's iCal feed; no Google API
+access is needed. To get the address: open Google Calendar on the web →
+Settings → pick the club calendar under "Settings for my calendars" →
+"Integrate calendar" → copy the **Secret address in iCal format** (or the
+public iCal address if the calendar is public). Treat the secret address
+like a password — anyone with it can read the calendar.
+
+In the app, an exec opens Practices → "Calendar sync", pastes the URL,
+saves it, and presses "Sync now". Only exec can see or change this page;
+everyone approved can see the resulting practices. Sync pulls events from
+60 days ago to 180 days ahead, expands weekly/daily recurrences, applies
+moved and cancelled instances, and removes practices in that window that
+are no longer in the feed. Each sync is recorded in `audit_log` as
+`calendar_sync`.
+
+Syncing is manual for now. A scheduled sync (cron hitting a route with a
+service key) is planned as a later step.

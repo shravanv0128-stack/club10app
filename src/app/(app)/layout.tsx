@@ -58,6 +58,12 @@ export default async function AppLayout({
             >
               Dashboard
             </Link>
+            <Link
+              href="/practices"
+              className="text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
+            >
+              Practices
+            </Link>
             {profile.role === "exec" && (
               <Link
                 href="/roster"
