@@ -16,6 +16,12 @@ This creates `profiles`, `captain_assignments`, `audit_log`, their RLS
 policies, and the `auth.users` trigger that provisions a `profiles` row
 (role `pending`) on first sign-in.
 
+Run `0002_exec_titles.sql` and `0003_rls_policies_repair.sql` the same way.
+If a paste ever runs partially (a syntax error or "already exists" aborts
+the batch), re-run `0003` — it is idempotent and restores every policy.
+Symptom of missing policies: the app treats everyone as unapproved and
+`profiles` queries return zero rows with no error.
+
 ## 3. Configure Google OAuth
 
 In Supabase Dashboard → Authentication → Providers → Google:
