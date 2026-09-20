@@ -33,15 +33,24 @@ checks the signed-in user's email domain and signs them out immediately
 ## 4. Promote your first exec
 
 New sign-ins land in `profiles` with `role = 'pending'` and are routed to
-`/pending-approval`. Promote the first exec manually in the SQL editor:
+`/pending-approval`. Promote the first exec manually in the SQL editor.
+
+The `on_profile_update_enforce_and_audit` trigger blocks any role change
+where `is_exec()` is false — and in the SQL editor there is no logged-in
+session, so `auth.uid()` is null and `is_exec()` is always false. Disable
+the trigger for this one bootstrap update, then re-enable it immediately:
 
 ```sql
+alter table public.profiles disable trigger on_profile_update_enforce_and_audit;
+
 update public.profiles set role = 'exec' where email = 'you@princeton.edu';
+
+alter table public.profiles enable trigger on_profile_update_enforce_and_audit;
 ```
 
-(The `profiles` RLS policy blocks anyone but an exec from changing `role`,
-including via the app, so this first promotion must be done directly in
-the database.)
+Every promotion after this first one should go through the app's Roster
+page instead (exec approving a pending signup), since that runs with a
+real exec session and the trigger applies normally.
 
 ## 5. Env vars
 
