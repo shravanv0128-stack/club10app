@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 const ROLE_LABEL: Record<Profile["role"], string> = {
   pending: "Pending",
   member: "Member",
