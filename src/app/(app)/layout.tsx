@@ -26,11 +26,19 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single<Profile>();
+
+  if (error) {
+    console.error("[app layout] profile lookup failed", {
+      userId: user.id,
+      email: user.email,
+      error,
+    });
+  }
 
   if (!profile || profile.role === "pending") {
     redirect("/pending-approval");
